@@ -1,7 +1,7 @@
 import testimoniData from '../../data/testimoni.json';
 import { motion } from 'framer-motion';
 
-export default function Testimoni() {
+export default function Blog() {
   return (
     <div className="max-w-6xl mx-auto py-12">
       {/* Header */}
