@@ -1,19 +1,19 @@
-import About from "../components/guest/Category";
+import Category from "../components/guest/Category";
 import Hero from "../components/guest/Hero";
-import ProductChecker from "../components/guest/ProductsChecker";
-import Produk from "../components/guest/Jobs";
+import Jobs from "../components/guest/Jobs";
 import Blog from "../components/guest/Blog";
 import Slider from "../components/guest/Slider"
+import Board from "../components/guest/Board";
 
 export default function Guest() {
   return (
     <div>
         <Hero />
         <Slider />
-        <About />
-        <Produk />
+        <Category />
+        <Jobs />
+        <Board />
         <Blog/>
-        <ProductChecker />
     </div>
   );
 }

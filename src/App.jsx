@@ -5,9 +5,12 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense } from "react";
 import Loading from "./components/Loading";
 
+const MainLayout = React.lazy(() => import("./layouts/MainLayout"));
 import GuestLayout from './layouts/GuestLayout';
 import Guest from './pages/guest';
 
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const Job = React.lazy(() => import("./pages/Job"));
 const NotFound = React.lazy(() => import("./pages/Notfound"));
 
 function App() {
@@ -17,6 +20,10 @@ function App() {
     <Suspense fallback={<Loading />}>
       <Routes>
       <Route path="*" element={<NotFound />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/job" element={<Job />} />
+        </Route>
 
         // GuestLayout
         <Route element={<GuestLayout />}>
