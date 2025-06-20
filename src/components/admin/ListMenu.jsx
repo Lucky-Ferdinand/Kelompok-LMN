@@ -17,19 +17,19 @@ export default function ListMenu({ horizontal = false }) {
                 </NavLink>
             </li>
             <li>
-                <NavLink to="/blogs" className={menuClass}>
+                <NavLink to="/blog" className={menuClass}>
                     <MdArticle className="text-lg" />
-                    {!horizontal && <span>Blogs</span>}
+                    {!horizontal && <span>Blog</span>}
                 </NavLink>
             </li>
             <li>
-                <NavLink to="/sliders" className={menuClass}>
+                <NavLink to="/slider" className={menuClass}>
                     <MdImage className="text-lg" />
                     {!horizontal && <span>Sliders</span>}
                 </NavLink>
             </li>
             <li>
-                <NavLink to="/companies" className={menuClass}>
+                <NavLink to="/company" className={menuClass}>
                     <MdBusiness className="text-lg" />
                     {!horizontal && <span>Companies</span>}
                 </NavLink>

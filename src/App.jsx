@@ -11,6 +11,9 @@ import Guest from './pages/guest';
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const Job = React.lazy(() => import("./pages/Job"));
+const Blog = React.lazy(() => import("./pages/Blog"));
+const Company = React.lazy(() => import("./pages/CompanyProfile"));
+const Slider = React.lazy(() => import("./pages/Slider"));
 const NotFound = React.lazy(() => import("./pages/Notfound"));
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/job" element={<Job />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/company" element={<Company />} />
+          <Route path="/slider" element={<Slider />} />
         </Route>
 
         // GuestLayout

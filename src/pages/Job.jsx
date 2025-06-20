@@ -1,9 +1,10 @@
-import { jobAPI } from "../services/jobAPI"; // Ganti sesuai file service-mu
 import { useState, useEffect } from "react";
-import AlertBox from "../components/components-job/AlertBox";
-import EmptyState from "../components/components-job/EmptyState";
-import GenericTable from "../components/components-job/GenericTable";
-import LoadingSpinner from "../components/components-job/LoadingSpinner";
+import { jobAPI } from "../services/jobAPI";
+import { uploadToSupabase } from "../utils/supabaseUpload";
+import AlertBox from "../components/components-Generic/AlertBox";
+import EmptyState from "../components/components-Generic/EmptyState";
+import GenericTable from "../components/components-Generic/GenericTable";
+import LoadingSpinner from "../components/components-Generic/LoadingSpinner";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 export default function Job() {
@@ -13,6 +14,7 @@ export default function Job() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [file, setFile] = useState(null);
 
   const [dataForm, setDataForm] = useState({
     title_job: "",
@@ -23,6 +25,7 @@ export default function Job() {
     salary_max: "",
     category: "",
     description: "",
+    image: "",
   });
 
   const handleChange = (e) => {
@@ -30,10 +33,15 @@ export default function Job() {
     setDataForm({ ...dataForm, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleEdit = (job) => {
     setIsEditMode(true);
     setEditId(job.id);
     setDataForm({ ...job });
+    setFile(null);
   };
 
   const handleSubmit = async (e) => {
@@ -43,11 +51,21 @@ export default function Job() {
       setError("");
       setSuccess("");
 
+      let imageUrl = dataForm.image;
+      if (file) {
+        imageUrl = await uploadToSupabase(file);
+      }
+
+      const payload = {
+        ...dataForm,
+        image: imageUrl,
+      };
+
       if (isEditMode && editId) {
-        await jobAPI.updateJob(editId, dataForm);
+        await jobAPI.updateJob(editId, payload);
         setSuccess("Lowongan berhasil diperbarui!");
       } else {
-        await jobAPI.createJob(dataForm);
+        await jobAPI.createJob(payload);
         setSuccess("Lowongan berhasil ditambahkan!");
       }
 
@@ -60,7 +78,9 @@ export default function Job() {
         salary_max: "",
         category: "",
         description: "",
+        image: "",
       });
+      setFile(null);
       setIsEditMode(false);
       setEditId(null);
       setTimeout(() => setSuccess(""), 3000);
@@ -74,10 +94,8 @@ export default function Job() {
 
   const handleDelete = async (id) => {
     if (!confirm("Yakin ingin menghapus data ini?")) return;
-
     try {
       setLoading(true);
-      setError("");
       await jobAPI.deleteJob(id);
       loadJobs();
     } catch (err) {
@@ -93,7 +111,7 @@ export default function Job() {
       const data = await jobAPI.fetchJobs();
       setJobs(data);
     } catch (err) {
-      setError("Gagal memuat data");
+      setError("Gagal memuat data lowongan");
     } finally {
       setLoading(false);
     }
@@ -113,12 +131,13 @@ export default function Job() {
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md grid grid-cols-2 gap-4">
         <input name="title_job" placeholder="Judul Pekerjaan" value={dataForm.title_job} onChange={handleChange} required className="input" />
         <input name="company_name" placeholder="Nama Perusahaan" value={dataForm.company_name} onChange={handleChange} required className="input" />
-        <input name="job_type" placeholder="Jenis Pekerjaan (Full-Time, Freelance, etc)" value={dataForm.job_type} onChange={handleChange} className="input" />
+        <input name="job_type" placeholder="Jenis Pekerjaan" value={dataForm.job_type} onChange={handleChange} className="input" />
         <input name="location" placeholder="Lokasi" value={dataForm.location} onChange={handleChange} className="input" />
         <input name="salary_min" type="number" placeholder="Gaji Minimum" value={dataForm.salary_min} onChange={handleChange} className="input" />
         <input name="salary_max" type="number" placeholder="Gaji Maksimum" value={dataForm.salary_max} onChange={handleChange} className="input" />
-        <input name="category" placeholder="Kategori Pekerjaan" value={dataForm.category} onChange={handleChange} className="input" />
-        <textarea name="description" placeholder="Deskripsi Pekerjaan" value={dataForm.description} onChange={handleChange} className="col-span-2 input" rows={3}></textarea>
+        <input name="category" placeholder="Kategori" value={dataForm.category} onChange={handleChange} className="input" />
+        <input type="file" accept="image/*" onChange={handleFileChange} className="input" />
+        <textarea name="description" placeholder="Deskripsi" value={dataForm.description} onChange={handleChange} className="col-span-2 input" rows={3}></textarea>
 
         <div className="col-span-2 flex gap-4">
           <button type="submit" className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
@@ -129,8 +148,10 @@ export default function Job() {
               setIsEditMode(false);
               setEditId(null);
               setDataForm({
-                title_job: "", company_name: "", job_type: "", location: "", salary_min: "", salary_max: "", category: "", description: ""
+                title_job: "", company_name: "", job_type: "", location: "",
+                salary_min: "", salary_max: "", category: "", description: "", image: ""
               });
+              setFile(null);
             }} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl">
               Batal
             </button>
@@ -145,17 +166,17 @@ export default function Job() {
         {!loading && jobs.length === 0 && <EmptyState text="Belum ada lowongan." />}
         {!loading && jobs.length > 0 && (
           <GenericTable
-            columns={["#", "Judul", "Perusahaan", "Kategori", "Lokasi", "Gaji", "#", "#"]}
+            columns={["#", "Judul", "Perusahaan", "Kategori", "Gaji", "Image", "#", "#"]}
             data={jobs}
             renderRow={(job, index) => (
               <>
                 <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2 font-bold">{job.title_job}</td>
+                <td className="px-4 py-2 font-semibold">{job.title_job}</td>
                 <td className="px-4 py-2">{job.company_name}</td>
                 <td className="px-4 py-2">{job.category}</td>
-                <td className="px-4 py-2">{job.location}</td>
+                <td className="px-4 py-2">{job.salary_min} - {job.salary_max}</td>
                 <td className="px-4 py-2">
-                  {job.salary_min} - {job.salary_max}
+                  {job.image && <img src={job.image} alt="image" className="w-10 h-10 object-contain rounded" />}
                 </td>
                 <td className="px-4 py-2">
                   <button onClick={() => handleEdit(job)}><AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" /></button>
