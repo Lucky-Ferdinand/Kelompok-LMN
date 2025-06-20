@@ -8,10 +8,10 @@ export default function Testimoni() {
       <div className="px-6 lg:px-0 mb-10 flex justify-between items-center">
         <div>
           <h1 className="text-[32px] sm:text-[40px] md:text-[55px] font-bold text-gray-900 font-montserrat-B">
-            Testimoni
+            From blog
           </h1>
           <p className="font-open-sans-L text-gray-500 text-base mt-1">
-            Apa kata pelanggan tentang makanan kami
+            Latest News & Events
           </p>
         </div>
       </div>

@@ -19,7 +19,7 @@ export default function Hero() {
           transition={{ delay: 0.2, duration: 0.6 }}
         >
           <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2" />
-          BEST FOOD PLACE
+          BEST JOBS PLACE
         </motion.p>
 
         {/* Judul utama */}
@@ -29,8 +29,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
         >
-          Tempat Makanan <br className="hidden sm:inline" />
-          Yang Enak & Murah
+          The Easiest Way to <br className="hidden sm:inline" />
+          Get Your New Job
         </motion.h1>
 
         {/* Deskripsi */}
@@ -40,8 +40,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
         >
-          Tersedia berbagai pilihan makanan lezat dan terjangkau. Beli sekarang
-          sebelum kehabisan!
+          Each month, more than 3 million job seekers turn to website in their search for work, making
+          over 140,000 applications every single day
         </motion.p>
 
         {/* Form Pencarian */}
@@ -55,7 +55,7 @@ export default function Hero() {
             <FaSearch className="text-gray-400" />
             <input
               type="text"
-              placeholder="Cari makanan, restoran..."
+              placeholder="Job title, Company..."
               className="font-open-sans-R text-[18px] outline-none bg-transparent w-full"
             />
           </div>
@@ -63,12 +63,12 @@ export default function Hero() {
             <FaMapMarkerAlt className="text-gray-400" />
             <input
               type="text"
-              placeholder="Lokasi"
+              placeholder="Location"
               className="font-open-sans-R text-[14px] outline-none bg-transparent w-full"
             />
           </div>
           <button className="font-open-sans-R bg-green-600 text-[18px] text-white font-semibold px-6 py-3 rounded-xl w-full sm:w-auto">
-            Cari Sekarang
+            Find Now
           </button>
         </motion.div>
 
@@ -80,9 +80,9 @@ export default function Hero() {
           transition={{ delay: 1.0, duration: 0.6 }}
         >
           <span className="font-montserrat-B font-bold text-gray-800">
-            Pencarian Populer:
+            Popular Searches:
           </span>{" "}
-          Nasi Goreng, Ayam Geprek, Mie Ayam, Soto, Sate
+          Designer, Developer, Web, Engineer, Senior
         </motion.p>
       </motion.div>
 
@@ -93,16 +93,14 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
       >
-        {/* Ganti dengan gambar makanan jika tersedia */}
-        <motion.span
-          id="logo-title"
-          className="font-poppins-extrabold text-[64px] lg:text-[96px] text-gray-900 leading-none"
+        <motion.img
+          src="/img/guest/hero-illustration.png" // Replace with your actual hero image path
+          alt="Illustration of a person finding a job"
+          className="object-contain h-full w-full"
           initial={{ scale: 0.9, y: 60 }}
           animate={{ scale: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.6 }}
-        >
-          Sedap<b className="text-green-600">.</b>
-        </motion.span>
+        />
       </motion.div>
     </section>
   );

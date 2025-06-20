@@ -7,11 +7,11 @@ const Footer = () => {
       <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12">
         {/* Logo & Deskripsi */}
         <div className="md:col-span-1">
-          <span id="logo-title" className="font-poppins-extrabold text-[40px] text-gray-900">
-            Sedap <b id="logo-dot" className="text-green-600">.</b>
+          <span id="logo-title" className="font-poppins-extrabold text-[38px] text-gray-900">
+            Job Portal <b id="logo-dot" className="text-green-600">.</b>
           </span>
           <p className="font-open-sans-L mt-6 text-sm leading-relaxed">
-            Sedap is the heart of the design community and the best resource to discover and connect with designers and jobs worldwide.
+            Job Portal is the heart of the design community and the best resource to discover and connect with designers and jobs worldwide.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ const Footer = () => {
       {/* Copyright & Social */}
       <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 pb-8 px-4">
         <p className="font-open-sans-L text-sm text-gray-600">
-          Copyright ©2025 <span className="text-green-600 font-semibold">Sedap</span>. All Rights Reserved
+          Copyright ©2025 <span className="text-green-600 font-semibold">Job Portal</span>. All Rights Reserved
         </p>
         <div className="flex gap-4">
           <a href="#" className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100">

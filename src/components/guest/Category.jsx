@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function About() {
+export default function Category() {
   return (
     <motion.div
       className="max-w-6xl mx-auto py-8"
@@ -17,7 +17,7 @@ export default function About() {
           transition={{ delay: 0.1, duration: 0.6 }}
           viewport={{ once: true }}
         >
-          About us
+          Browse by category
         </motion.h1>
         <motion.p
           className="font-open-sans-L text-[16px] text-gray-600 max-w-2xl text-left"
@@ -26,7 +26,8 @@ export default function About() {
           transition={{ delay: 0.2, duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Kita percaya makanan dapat membuat semua orang bahagia
+          Find the type of work you need, clearly defined and ready to start. Work begins as soon as you 
+          purchase and provide requirements.
         </motion.p>
       </div>
 
