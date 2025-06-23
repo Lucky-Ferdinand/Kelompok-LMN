@@ -1,22 +1,39 @@
-import produkData from "../../data/produk.json";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaRegClock, FaMapMarkerAlt, FaBookmark } from "react-icons/fa"; // Import icons
+import { FaRegClock, FaMapMarkerAlt, FaBookmark } from "react-icons/fa";
 
 export default function RecentJobs() {
+  const [produkData, setProdukData] = useState([]);
+
+  useEffect(() => {
+    const storedJobs = localStorage.getItem("jobs");
+    if (storedJobs) {
+      const parsed = JSON.parse(storedJobs);
+
+      // Format ulang gaji agar terbaca rapi
+      const formatted = parsed.map((job, i) => ({
+        ...job,
+        price: `Rp.${parseInt(job.salary_min).toLocaleString()} - Rp.${parseInt(job.salary_max).toLocaleString()}`
+      }));
+
+      setProdukData(formatted);
+    }
+  }, []);
+
   return (
     <div className="max-w-6xl mx-auto py-8">
-      {/* Combined Heading and Category Filter Buttons */}
+      {/* Header */}
       <div className="px-6 lg:px-0 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[55px] xl:text-[55px] font-montserrat-B text-gray-900 font-bold">
             Recent Jobs
           </h1>
           <p className="font-open-sans-L text-[16px] text-gray-600 text-left">
-            8 new opportunities posted today!
+            {produkData.length} new opportunities posted today!
           </p>
         </div>
 
-        {/* Category Filter Buttons - Now inside the flex container */}
+        {/* Filter Kategori */}
         <div className="flex gap-4 overflow-x-auto pb-2 flex-shrink-0">
           <button className="px-5 py-2 rounded-full bg-blue-100 text-blue-800 font-semibold text-sm whitespace-nowrap">
             Design
@@ -36,7 +53,7 @@ export default function RecentJobs() {
         </div>
       </div>
 
-      {/* Card Grid */}
+      {/* Kartu Job */}
       <div className="grid md:grid-cols-3 gap-6 px-6 lg:px-0">
         {produkData.map((job, index) => (
           <motion.div
@@ -55,7 +72,7 @@ export default function RecentJobs() {
               boxShadow: "0 10px 20px rgba(0,0,0,0.12)",
             }}
           >
-            {/* Image (Company Banner/Job Image) */}
+            {/* Gambar */}
             <div className="relative">
               <img
                 src={job.image}
@@ -71,16 +88,15 @@ export default function RecentJobs() {
 
             {/* Konten */}
             <div className="p-4">
-              {/* Header: Avatar (Company Logo) and Status */}
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
                   <img
                     src={job.avatar}
                     alt={job.Pembuat}
-                    className="w-8 h-8 rounded-full" // Adjust size if needed
+                    className="w-8 h-8 rounded-full"
                   />
                   <span className="font-open-sans-L text-sm text-gray-700">
-                    {job.Pembuat} {/* 'Pembuat' should be 'Company Name' */}
+                    {job.Pembuat}
                   </span>
                 </div>
                 {job.isFulltime && (
@@ -90,12 +106,10 @@ export default function RecentJobs() {
                 )}
               </div>
 
-              {/* Judul (Job Title) */}
               <h2 className="font-montserrat-M text-gray-800 text-[22px] leading-snug mb-3">
                 {job.title}
               </h2>
 
-              {/* Waktu & Lokasi */}
               <div className="font-open-sans-L text-sm text-gray-500 flex items-center gap-2 mb-2">
                 <FaRegClock className="w-4 h-4" />
                 <span>{job.time}</span>
@@ -104,7 +118,6 @@ export default function RecentJobs() {
                 <span>{job.location}</span>
               </div>
 
-              {/* Salary & Bookmark */}
               <div className="flex justify-between items-center mt-3">
                 <span className="font-montserrat-B text-blue-600 text-[22px] font-bold">
                   {job.price}
@@ -112,8 +125,6 @@ export default function RecentJobs() {
                     /Month
                   </span>
                 </span>
-
-                {/* Bookmark Icon */}
                 <button className="text-gray-400 hover:text-gray-600">
                   <FaBookmark className="w-5 h-5" />
                 </button>

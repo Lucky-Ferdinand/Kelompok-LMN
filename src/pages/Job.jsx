@@ -110,6 +110,23 @@ export default function Job() {
       setLoading(true);
       const data = await jobAPI.fetchJobs();
       setJobs(data);
+
+      // ✅ Simpan juga data ke localStorage untuk Guest
+      const formatted = data.map((job) => ({
+        id: job.id,
+        title: job.title_job,
+        Pembuat: job.company_name,
+        time: "Baru saja", // atau bisa gunakan Date formatter
+        image: job.image || "/img/guest/default.jpg",
+        location: job.location,
+        salary_min: job.salary_min,
+        salary_max: job.salary_max,
+        avatar: "https://avatar.iran.liara.run/public/28",
+        isFulltime: job.job_type?.toLowerCase() === "fulltime",
+        isUrgent: job.category?.toLowerCase().includes("urgent"),
+      }));
+
+      localStorage.setItem("jobs", JSON.stringify(formatted));
     } catch (err) {
       setError("Gagal memuat data lowongan");
     } finally {
@@ -144,15 +161,26 @@ export default function Job() {
             {loading ? "Menyimpan..." : isEditMode ? "Simpan Perubahan" : "Tambah"}
           </button>
           {isEditMode && (
-            <button type="button" onClick={() => {
-              setIsEditMode(false);
-              setEditId(null);
-              setDataForm({
-                title_job: "", company_name: "", job_type: "", location: "",
-                salary_min: "", salary_max: "", category: "", description: "", image: ""
-              });
-              setFile(null);
-            }} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl">
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditMode(false);
+                setEditId(null);
+                setDataForm({
+                  title_job: "",
+                  company_name: "",
+                  job_type: "",
+                  location: "",
+                  salary_min: "",
+                  salary_max: "",
+                  category: "",
+                  description: "",
+                  image: "",
+                });
+                setFile(null);
+              }}
+              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl"
+            >
               Batal
             </button>
           )}
@@ -179,10 +207,14 @@ export default function Job() {
                   {job.image && <img src={job.image} alt="image" className="w-10 h-10 object-contain rounded" />}
                 </td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleEdit(job)}><AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" /></button>
+                  <button onClick={() => handleEdit(job)}>
+                    <AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" />
+                  </button>
                 </td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleDelete(job.id)}><AiFillDelete className="text-red-500 hover:text-red-700 text-xl" /></button>
+                  <button onClick={() => handleDelete(job.id)}>
+                    <AiFillDelete className="text-red-500 hover:text-red-700 text-xl" />
+                  </button>
                 </td>
               </>
             )}

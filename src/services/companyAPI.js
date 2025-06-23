@@ -28,4 +28,12 @@ export const companyAPI = {
   async deleteCompany(id) {
     await axios.delete(`${API_URL}?id=eq.${id}`, { headers });
   },
+
+  async searchCompanies(keyword) {
+    const response = await axios.get(
+      `${API_URL}?company_name=ilike.*${encodeURIComponent(keyword)}*`,
+      { headers }
+    );
+    return response.data;
+  }
 };

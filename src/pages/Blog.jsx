@@ -52,10 +52,7 @@ export default function Blog() {
         imageUrl = await uploadToSupabase(file);
       }
 
-      const payload = {
-        ...dataForm,
-        image: imageUrl,
-      };
+      const payload = { ...dataForm, image: imageUrl };
 
       if (isEditMode && editId) {
         await blogAPI.updateBlog(editId, payload);
@@ -65,11 +62,18 @@ export default function Blog() {
         setSuccess("Blog berhasil ditambahkan!");
       }
 
-      setDataForm({ author_name: "", published_at: "", title_blog: "", content: "", image: "" });
+      setDataForm({
+        author_name: "",
+        published_at: "",
+        title_blog: "",
+        content: "",
+        image: "",
+      });
       setFile(null);
       setIsEditMode(false);
       setEditId(null);
       setTimeout(() => setSuccess(""), 3000);
+
       loadBlogs();
     } catch (err) {
       setError("Gagal menyimpan data: " + err.message);
@@ -97,6 +101,16 @@ export default function Blog() {
       setLoading(true);
       const data = await blogAPI.fetchBlogs();
       setBlogs(data);
+
+      const formatted = data.map((blog) => ({
+        id: blog.id,
+        author_name: blog.author_name,
+        published_at: blog.published_at,
+        title_blog: blog.title_blog,
+        content: blog.content,
+        image: blog.image,
+      }));
+      localStorage.setItem("blogs", JSON.stringify(formatted));
     } catch (err) {
       setError("Gagal memuat data");
     } finally {

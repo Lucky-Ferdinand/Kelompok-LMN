@@ -1,34 +1,25 @@
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
-const logos = [
-  {
-    src: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
-    alt: "Google",
-  },
-  {
-    src: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_Bélo.svg",
-    alt: "Airbnb",
-  },
-  {
-    src: "https://tse2.mm.bing.net/th?id=OIP.yq9-JFqGo-04f8HRsIOX6QHaEK&pid=Api&P=0&h=220",
-    alt: "Dropbox",
-  },
-  {
-    src: "https://1000logos.net/wp-content/uploads/2017/07/FedEx-logo.jpg",
-    alt: "FedEx",
-  },
-  {
-    src: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Walmart_logo.svg",
-    alt: "Walmart",
-  },
-  {
-    src: "https://tse1.mm.bing.net/th?id=OIP.crNF03UuBkCLzgbphs7RSwHaCK&pid=Api&P=0&h=220",
-    alt: "HubSpot",
-  },
-];
-
 export default function CompanyLogoSlider() {
+  const [logos, setLogos] = useState([]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("sliders");
+    if (data) {
+      const parsed = JSON.parse(data);
+      // Format sesuai kebutuhan: { src, alt }
+      const formatted = parsed.map((item) => ({
+        src: item.image,
+        alt: item.title || "slider",
+      }));
+      setLogos(formatted);
+    }
+  }, []);
+
+  if (logos.length === 0) return null;
+
   return (
     <div className="max-w-7xl mx-auto py-12">
       <Swiper

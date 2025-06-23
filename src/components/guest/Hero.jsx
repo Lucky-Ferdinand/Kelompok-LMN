@@ -1,7 +1,21 @@
+import { useState } from "react";
 import { FaSearch, FaMapMarkerAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { companyAPI } from "../../services/companyAPI";
 
 export default function Hero() {
+  const [keyword, setKeyword] = useState("");
+  const [results, setResults] = useState([]);
+
+  const handleSearch = async () => {
+    try {
+      const companies = await companyAPI.searchCompanies(keyword);
+      setResults(companies);
+    } catch (err) {
+      console.error("Error saat mencari perusahaan:", err);
+    }
+  };
+
   return (
     <section className="mt-10 max-w-7xl mx-auto bg-[#FFF9F5] px-6 lg:px-24 flex flex-col-reverse lg:flex-row items-center justify-between gap-10 rounded-[60px] min-h-[700px] overflow-hidden">
       {/* LEFT SIDE */}
@@ -11,7 +25,6 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        {/* Subjudul kecil */}
         <motion.p
           className="font-montserrat-M text-green-600 font-semibold mb-4"
           initial={{ opacity: 0, y: 60 }}
@@ -22,7 +35,6 @@ export default function Hero() {
           BEST JOBS PLACE
         </motion.p>
 
-        {/* Judul utama */}
         <motion.h1
           className="font-montserrat-B text-[32px] sm:text-[40px] md:text-[48px] lg:text-[69px] font-bold text-gray-900 leading-tight"
           initial={{ opacity: 0, y: 60 }}
@@ -33,7 +45,6 @@ export default function Hero() {
           Get Your New Job
         </motion.h1>
 
-        {/* Deskripsi */}
         <motion.p
           className="font-open-sans-R text-gray-600 mt-4 text-[16px] lg:text-[16px]"
           initial={{ opacity: 0, y: 60 }}
@@ -44,7 +55,7 @@ export default function Hero() {
           over 140,000 applications every single day
         </motion.p>
 
-        {/* Form Pencarian */}
+        {/* FORM PENCARIAN */}
         <motion.div
           className="mt-8 bg-white p-4 rounded-3xl shadow-md grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center"
           initial={{ opacity: 0, y: 60 }}
@@ -55,24 +66,49 @@ export default function Hero() {
             <FaSearch className="text-gray-400" />
             <input
               type="text"
-              placeholder="Job title, Company..."
+              placeholder="Search company name..."
               className="font-open-sans-R text-[18px] outline-none bg-transparent w-full"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
+
           <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl">
             <FaMapMarkerAlt className="text-gray-400" />
             <input
               type="text"
-              placeholder="Location"
+              placeholder="Location (not implemented)"
               className="font-open-sans-R text-[14px] outline-none bg-transparent w-full"
+              disabled
             />
           </div>
-          <button className="font-open-sans-R bg-green-600 text-[18px] text-white font-semibold px-6 py-3 rounded-xl w-full sm:w-auto">
+
+          <button
+            onClick={handleSearch}
+            className="font-open-sans-R bg-green-600 text-[18px] text-white font-semibold px-6 py-3 rounded-xl w-full sm:w-auto"
+          >
             Find Now
           </button>
         </motion.div>
 
-        {/* Pencarian Populer */}
+        {/* HASIL PENCARIAN */}
+        {results.length > 0 && (
+          <motion.div
+            className="mt-6 bg-white p-4 rounded-2xl shadow space-y-4 max-h-[300px] overflow-y-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.6 }}
+          >
+            {results.map((company) => (
+              <div key={company.id} className="border-b pb-2 last:border-none">
+                <p className="text-lg font-semibold">{company.company_name}</p>
+                <p className="text-sm text-gray-600">{company.address}</p>
+                <p className="text-sm text-gray-500 mt-1">{company.description}</p>
+              </div>
+            ))}
+          </motion.div>
+        )}
+
         <motion.p
           className="font-open-sans-R mt-4 text-[16px] text-gray-600"
           initial={{ opacity: 0, y: 60 }}
@@ -94,7 +130,7 @@ export default function Hero() {
         transition={{ duration: 1, delay: 0.5 }}
       >
         <motion.img
-          src="/img/guest/hero-illustration.png" // Replace with your actual hero image path
+          src="/img/guest/hero-illustration.png"
           alt="Illustration of a person finding a job"
           className="object-contain h-full w-full"
           initial={{ scale: 0.9, y: 60 }}
