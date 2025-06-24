@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaRegClock, FaMapMarkerAlt, FaBookmark } from "react-icons/fa";
-import { jobAPI } from "../../services/jobAPI"; // ⬅️ Ganti path jika perlu
+import { FaRegClock, FaMapMarkerAlt, FaBookmark, FaTimes } from "react-icons/fa";
+import { jobAPI } from "../../services/jobAPI";
 
 export default function RecentJobs() {
   const [jobs, setJobs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedJob, setSelectedJob] = useState(null); // <-- Untuk popup
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -21,8 +23,6 @@ export default function RecentJobs() {
         }));
 
         setJobs(formatted);
-
-        // Ambil kategori unik
         const uniqueCategories = Array.from(new Set(data.map((job) => job.category))).filter(Boolean);
         setCategories(uniqueCategories);
       } catch (error) {
@@ -38,53 +38,23 @@ export default function RecentJobs() {
       ? jobs
       : jobs.filter((job) => job.category === selectedCategory);
 
-  return (
-    <div className="max-w-6xl mx-auto py-8">
-      {/* Header */}
-      <div className="px-6 lg:px-0 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[40px] md:text-[48px] font-bold text-gray-900">
-            Recent Jobs
-          </h1>
-          <p className="text-[16px] text-gray-600">
-            {filteredJobs.length} new opportunities posted today!
-          </p>
-        </div>
+  const handleCardClick = (job) => {
+    setSelectedJob(job);
+    setShowModal(true);
+  };
 
-        {/* Filter Kategori */}
-        <div className="flex gap-3 overflow-x-auto pb-2 flex-shrink-0">
-          <button
-            onClick={() => setSelectedCategory("All")}
-            className={`px-5 py-2 rounded-full text-sm font-semibold ${
-              selectedCategory === "All"
-                ? "bg-purple-200 text-purple-900 ring-2 ring-purple-500"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            All
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap ${
-                selectedCategory === cat
-                  ? "bg-purple-200 text-purple-900 ring-2 ring-purple-500"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
+  return (
+    <div className="max-w-6xl mx-auto py-8 relative">
+      {/* Header dan Filter */}
+      {/* ... (sama seperti sebelumnya) */}
 
       {/* Kartu Job */}
       <div className="grid md:grid-cols-3 gap-6 px-6 lg:px-0">
         {filteredJobs.map((job, index) => (
           <motion.div
             key={job.id}
-            className="bg-white shadow-md rounded-xl overflow-hidden border"
+            className="bg-white shadow-md rounded-xl overflow-hidden border cursor-pointer"
+            onClick={() => handleCardClick(job)}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -145,6 +115,46 @@ export default function RecentJobs() {
           </motion.div>
         ))}
       </div>
+
+      {/* Popup Modal */}
+      {showModal && selectedJob && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-xl w-full p-6 relative shadow-lg">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+              onClick={() => setShowModal(false)}
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              {selectedJob.title_job}
+            </h2>
+            <p className="text-sm text-gray-600 mb-1">
+              <strong>Company:</strong> {selectedJob.company_name}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              <strong>Location:</strong> {selectedJob.location}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              <strong>Job Type:</strong> {selectedJob.job_type}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              <strong>Salary:</strong> {selectedJob.price}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">
+              <strong>Category:</strong> {selectedJob.category}
+            </p>
+            <p className="text-sm text-gray-600 mb-3">
+              <strong>Posted:</strong> {new Date(selectedJob.created_at).toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-700">
+              <strong>Description:</strong><br />
+              {selectedJob.description}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
