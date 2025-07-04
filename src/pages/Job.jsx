@@ -111,12 +111,11 @@ export default function Job() {
       const data = await jobAPI.fetchJobs();
       setJobs(data);
 
-      // ✅ Simpan juga data ke localStorage untuk Guest
       const formatted = data.map((job) => ({
         id: job.id,
         title: job.title_job,
         Pembuat: job.company_name,
-        time: "Baru saja", // atau bisa gunakan Date formatter
+        time: "Baru saja",
         image: job.image || "/img/guest/default.jpg",
         location: job.location,
         salary_min: job.salary_min,
@@ -139,25 +138,89 @@ export default function Job() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Manajemen Lowongan</h2>
+    <div className="max-w-5xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-100 via-blue-50 to-green-50 rounded-3xl shadow-lg border border-purple-100">
+      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Manajemen Lowongan</h2>
 
       {error && <AlertBox type="error">{error}</AlertBox>}
       {success && <AlertBox type="success">{success}</AlertBox>}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md grid grid-cols-2 gap-4">
-        <input name="title_job" placeholder="Judul Pekerjaan" value={dataForm.title_job} onChange={handleChange} required className="input" />
-        <input name="company_name" placeholder="Nama Perusahaan" value={dataForm.company_name} onChange={handleChange} required className="input" />
-        <input name="job_type" placeholder="Jenis Pekerjaan" value={dataForm.job_type} onChange={handleChange} className="input" />
-        <input name="location" placeholder="Lokasi" value={dataForm.location} onChange={handleChange} className="input" />
-        <input name="salary_min" type="number" placeholder="Gaji Minimum" value={dataForm.salary_min} onChange={handleChange} className="input" />
-        <input name="salary_max" type="number" placeholder="Gaji Maksimum" value={dataForm.salary_max} onChange={handleChange} className="input" />
-        <input name="category" placeholder="Kategori" value={dataForm.category} onChange={handleChange} className="input" />
-        <input type="file" accept="image/*" onChange={handleFileChange} className="input" />
-        <textarea name="description" placeholder="Deskripsi" value={dataForm.description} onChange={handleChange} className="col-span-2 input" rows={3}></textarea>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white/70 p-8 rounded-2xl shadow-md backdrop-blur-md border border-purple-100 grid grid-cols-2 gap-4"
+      >
+        <input
+          name="title_job"
+          placeholder="Judul Pekerjaan"
+          value={dataForm.title_job}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="company_name"
+          placeholder="Nama Perusahaan"
+          value={dataForm.company_name}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="job_type"
+          placeholder="Jenis Pekerjaan"
+          value={dataForm.job_type}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="location"
+          placeholder="Lokasi"
+          value={dataForm.location}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="salary_min"
+          type="number"
+          placeholder="Gaji Minimum"
+          value={dataForm.salary_min}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="salary_max"
+          type="number"
+          placeholder="Gaji Maksimum"
+          value={dataForm.salary_max}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="category"
+          placeholder="Kategori"
+          value={dataForm.category}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <textarea
+          name="description"
+          placeholder="Deskripsi"
+          value={dataForm.description}
+          onChange={handleChange}
+          rows={3}
+          className="col-span-2 w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        ></textarea>
 
-        <div className="col-span-2 flex gap-4">
-          <button type="submit" className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
+        <div className="col-span-2 flex gap-4 mt-2">
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
+          >
             {loading ? "Menyimpan..." : isEditMode ? "Simpan Perubahan" : "Tambah"}
           </button>
           {isEditMode && (
@@ -179,7 +242,7 @@ export default function Job() {
                 });
                 setFile(null);
               }}
-              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl"
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
             >
               Batal
             </button>
@@ -188,7 +251,7 @@ export default function Job() {
       </form>
 
       <div className="mt-10">
-        <h3 className="text-xl font-semibold mb-4">Daftar Lowongan ({jobs.length})</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-gray-700">Daftar Lowongan ({jobs.length})</h3>
 
         {loading && <LoadingSpinner text="Memuat lowongan..." />}
         {!loading && jobs.length === 0 && <EmptyState text="Belum ada lowongan." />}
@@ -199,12 +262,18 @@ export default function Job() {
             renderRow={(job, index) => (
               <>
                 <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2 font-semibold">{job.title_job}</td>
+                <td className="px-4 py-2 font-semibold text-purple-800">{job.title_job}</td>
                 <td className="px-4 py-2">{job.company_name}</td>
                 <td className="px-4 py-2">{job.category}</td>
                 <td className="px-4 py-2">{job.salary_min} - {job.salary_max}</td>
                 <td className="px-4 py-2">
-                  {job.image && <img src={job.image} alt="image" className="w-10 h-10 object-contain rounded" />}
+                  {job.image && (
+                    <img
+                      src={job.image}
+                      alt="image"
+                      className="w-10 h-10 object-contain rounded-md border border-purple-200"
+                    />
+                  )}
                 </td>
                 <td className="px-4 py-2">
                   <button onClick={() => handleEdit(job)}>

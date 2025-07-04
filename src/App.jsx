@@ -15,6 +15,10 @@ const Blog = React.lazy(() => import("./pages/Blog"));
 const Company = React.lazy(() => import("./pages/CompanyProfile"));
 const Slider = React.lazy(() => import("./pages/Slider"));
 const NotFound = React.lazy(() => import("./pages/Notfound"));
+const AuthLayout = React.lazy(() => import("./layouts/AuthLayouts"));
+const Login = React.lazy(() => import("./pages/auth/Login"));
+const Register = React.lazy(() => import("./pages/auth/Register"));
+const Forgot = React.lazy(() => import("./pages/auth/Forgot"));
 
 function App() {
   const [count, setCount] = useState(0);
@@ -29,6 +33,12 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/company" element={<Company />} />
           <Route path="/slider" element={<Slider />} />
+        </Route>
+
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot" element={<Forgot />} />
         </Route>
 
         // GuestLayout

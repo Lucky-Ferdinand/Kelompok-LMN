@@ -40,50 +40,39 @@ export default function CompanyProfile() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    setLoading(true);
-    setError("");
-    setSuccess("");
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError("");
+      setSuccess("");
 
-    let logoUrl = dataForm.logo;
-    if (file) {
-      logoUrl = await uploadToSupabase(file); // Upload dan dapatkan URL
+      let logoUrl = dataForm.logo;
+      if (file) {
+        logoUrl = await uploadToSupabase(file);
+      }
+
+      const payload = { ...dataForm, logo: logoUrl };
+
+      if (isEditMode && editId) {
+        await companyAPI.updateCompany(editId, payload);
+        setSuccess("Data perusahaan berhasil diperbarui!");
+      } else {
+        await companyAPI.createCompany(payload);
+        setSuccess("Data perusahaan berhasil ditambahkan!");
+      }
+
+      setDataForm({ company_name: "", description: "", logo: "", address: "" });
+      setFile(null);
+      setIsEditMode(false);
+      setEditId(null);
+      setTimeout(() => setSuccess(""), 3000);
+      loadCompanies();
+    } catch (err) {
+      setError("Gagal menyimpan data: " + err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const payload = {
-      company_name: dataForm.company_name,
-      description: dataForm.description,
-      logo: logoUrl,
-      address: dataForm.address,
-    };
-
-    if (isEditMode && editId) {
-      await companyAPI.updateCompany(editId, payload);
-      setSuccess("Data perusahaan berhasil diperbarui!");
-    } else {
-      await companyAPI.createCompany(payload);
-      setSuccess("Data perusahaan berhasil ditambahkan!");
-    }
-
-    setDataForm({
-      company_name: "",
-      description: "",
-      logo: "",
-      address: "",
-    });
-    setFile(null);
-    setIsEditMode(false);
-    setEditId(null);
-    setTimeout(() => setSuccess(""), 3000);
-    loadCompanies();
-  } catch (err) {
-    setError("Gagal menyimpan data: " + err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const handleDelete = async (id) => {
     if (!confirm("Yakin ingin menghapus data ini?")) return;
@@ -115,20 +104,51 @@ export default function CompanyProfile() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Profil Perusahaan</h2>
+    <div className="max-w-5xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-50 to-green-50 rounded-3xl shadow-md border border-purple-200 ring-1 ring-purple-100">
+      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Profil Perusahaan</h2>
 
       {error && <AlertBox type="error">{error}</AlertBox>}
       {success && <AlertBox type="success">{success}</AlertBox>}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md grid grid-cols-2 gap-4">
-        <input name="company_name" placeholder="Nama Perusahaan" value={dataForm.company_name} onChange={handleChange} className="input" required />
-        <input type="file" accept="image/*" onChange={handleFileChange} className="input" />
-        <input name="address" placeholder="Alamat" value={dataForm.address} onChange={handleChange} className="col-span-2 input" />
-        <textarea name="description" placeholder="Deskripsi Perusahaan" value={dataForm.description} onChange={handleChange} className="col-span-2 input" rows={3}></textarea>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-2xl shadow-lg border border-purple-100 grid grid-cols-2 gap-4"
+      >
+        <input
+          name="company_name"
+          placeholder="Nama Perusahaan"
+          value={dataForm.company_name}
+          onChange={handleChange}
+          className="col-span-2 w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+          required
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+        />
+        <input
+          name="address"
+          placeholder="Alamat"
+          value={dataForm.address}
+          onChange={handleChange}
+          className="col-span-2 w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        />
+        <textarea
+          name="description"
+          placeholder="Deskripsi Perusahaan"
+          value={dataForm.description}
+          onChange={handleChange}
+          rows={3}
+          className="col-span-2 w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+        ></textarea>
 
-        <div className="col-span-2 flex gap-4">
-          <button type="submit" className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
+        <div className="col-span-2 flex gap-4 mt-2">
+          <button
+            type="submit"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
+          >
             {loading ? "Menyimpan..." : isEditMode ? "Simpan Perubahan" : "Tambah"}
           </button>
           {isEditMode && (
@@ -140,7 +160,7 @@ export default function CompanyProfile() {
                 setDataForm({ company_name: "", description: "", logo: "", address: "" });
                 setFile(null);
               }}
-              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl"
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
             >
               Batal
             </button>
@@ -149,7 +169,7 @@ export default function CompanyProfile() {
       </form>
 
       <div className="mt-10">
-        <h3 className="text-xl font-semibold mb-4">Daftar Perusahaan ({companies.length})</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-gray-700">Daftar Perusahaan ({companies.length})</h3>
 
         {loading && <LoadingSpinner text="Memuat data..." />}
         {!loading && companies.length === 0 && <EmptyState text="Belum ada data perusahaan." />}
@@ -166,10 +186,14 @@ export default function CompanyProfile() {
                   {item.logo && <img src={item.logo} alt="logo" className="w-10 h-10 object-contain rounded" />}
                 </td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleEdit(item)}><AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" /></button>
+                  <button onClick={() => handleEdit(item)}>
+                    <AiFillEdit className="text-purple-500 hover:text-purple-700 text-xl" />
+                  </button>
                 </td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleDelete(item.id)}><AiFillDelete className="text-red-500 hover:text-red-700 text-xl" /></button>
+                  <button onClick={() => handleDelete(item.id)}>
+                    <AiFillDelete className="text-red-500 hover:text-red-700 text-xl" />
+                  </button>
                 </td>
               </>
             )}

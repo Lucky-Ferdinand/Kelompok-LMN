@@ -84,7 +84,6 @@ export default function Blog() {
 
   const handleDelete = async (id) => {
     if (!confirm("Yakin ingin menghapus blog ini?")) return;
-
     try {
       setLoading(true);
       await blogAPI.deleteBlog(id);
@@ -101,16 +100,7 @@ export default function Blog() {
       setLoading(true);
       const data = await blogAPI.fetchBlogs();
       setBlogs(data);
-
-      const formatted = data.map((blog) => ({
-        id: blog.id,
-        author_name: blog.author_name,
-        published_at: blog.published_at,
-        title_blog: blog.title_blog,
-        content: blog.content,
-        image: blog.image,
-      }));
-      localStorage.setItem("blogs", JSON.stringify(formatted));
+      localStorage.setItem("blogs", JSON.stringify(data));
     } catch (err) {
       setError("Gagal memuat data");
     } finally {
@@ -123,21 +113,59 @@ export default function Blog() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Manajemen Blog</h2>
+    <div className="max-w-5xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl shadow-md border border-purple-200 ring-1 ring-purple-100">
+      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Manajemen Blog</h2>
 
       {error && <AlertBox type="error">{error}</AlertBox>}
       {success && <AlertBox type="success">{success}</AlertBox>}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md grid grid-cols-2 gap-4">
-        <input name="author_name" placeholder="Nama Penulis" value={dataForm.author_name} onChange={handleChange} className="input" required />
-        <input name="published_at" type="date" value={dataForm.published_at} onChange={handleChange} className="input" />
-        <input name="title_blog" placeholder="Judul Blog" value={dataForm.title_blog} onChange={handleChange} className="col-span-2 input" required />
-        <textarea name="content" placeholder="Isi Blog" value={dataForm.content} onChange={handleChange} className="col-span-2 input" rows={4}></textarea>
-        <input type="file" accept="image/*" onChange={handleFileChange} className="input col-span-2" />
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-2xl shadow-lg border border-purple-100 grid grid-cols-2 gap-4"
+      >
+        <input
+          name="author_name"
+          placeholder="Nama Penulis"
+          value={dataForm.author_name}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition"
+          required
+        />
+        <input
+          name="published_at"
+          type="date"
+          value={dataForm.published_at}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-800 transition"
+        />
+        <input
+          name="title_blog"
+          placeholder="Judul Blog"
+          value={dataForm.title_blog}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition col-span-2"
+          required
+        />
+        <textarea
+          name="content"
+          placeholder="Isi Blog"
+          value={dataForm.content}
+          onChange={handleChange}
+          rows={4}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder:text-purple-400 text-gray-800 transition col-span-2"
+        ></textarea>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 border border-purple-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-700 transition col-span-2"
+        />
 
-        <div className="col-span-2 flex gap-4">
-          <button type="submit" className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
+        <div className="col-span-2 flex gap-4 mt-2">
+          <button
+            type="submit"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
+          >
             {loading ? "Menyimpan..." : isEditMode ? "Simpan Perubahan" : "Tambah"}
           </button>
           {isEditMode && (
@@ -146,10 +174,16 @@ export default function Blog() {
               onClick={() => {
                 setIsEditMode(false);
                 setEditId(null);
-                setDataForm({ author_name: "", published_at: "", title_blog: "", content: "", image: "" });
+                setDataForm({
+                  author_name: "",
+                  published_at: "",
+                  title_blog: "",
+                  content: "",
+                  image: "",
+                });
                 setFile(null);
               }}
-              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl"
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-xl shadow-md transition"
             >
               Batal
             </button>
@@ -158,7 +192,7 @@ export default function Blog() {
       </form>
 
       <div className="mt-10">
-        <h3 className="text-xl font-semibold mb-4">Daftar Blog ({blogs.length})</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-gray-700">Daftar Blog ({blogs.length})</h3>
 
         {loading && <LoadingSpinner text="Memuat blog..." />}
         {!loading && blogs.length === 0 && <EmptyState text="Belum ada blog." />}
@@ -172,12 +206,24 @@ export default function Blog() {
                 <td className="px-4 py-2 font-bold">{blog.title_blog}</td>
                 <td className="px-4 py-2">{blog.author_name}</td>
                 <td className="px-4 py-2">{blog.published_at}</td>
-                <td className="px-4 py-2">{blog.image && <img src={blog.image} alt="blog" className="w-10 h-10 object-cover rounded" />}</td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleEdit(blog)}><AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" /></button>
+                  {blog.image && (
+                    <img
+                      src={blog.image}
+                      alt="blog"
+                      className="w-10 h-10 object-cover rounded"
+                    />
+                  )}
                 </td>
                 <td className="px-4 py-2">
-                  <button onClick={() => handleDelete(blog.id)}><AiFillDelete className="text-red-500 hover:text-red-700 text-xl" /></button>
+                  <button onClick={() => handleEdit(blog)}>
+                    <AiFillEdit className="text-purple-500 hover:text-purple-700 text-xl" />
+                  </button>
+                </td>
+                <td className="px-4 py-2">
+                  <button onClick={() => handleDelete(blog.id)}>
+                    <AiFillDelete className="text-red-500 hover:text-red-700 text-xl" />
+                  </button>
                 </td>
               </>
             )}

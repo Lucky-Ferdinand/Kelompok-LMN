@@ -1,22 +1,41 @@
 export default function GenericTable({ columns, data, renderRow }) {
     return (
-        <table className="min-w-full divide-y divide-gray-200 overflow-hidden rounded-2xl shadow-lg">
-            <thead className="text-white bg-hijau">
-                <tr>
-                    {columns.map((col, idx) => (
-                        <th key={idx} className="px-6 py-3">
-                            {col}
-                        </th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-100 text-sm text-gray-800">
-                {data.map((item, index) => (
-                    <tr key={index} >
-                        {renderRow(item, index)}
+        <div className="overflow-x-auto rounded-3xl border border-purple-100 bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 shadow-xl">
+            <table className="min-w-full text-sm text-gray-700">
+                <thead className="bg-purple-100/60 text-purple-900 text-left">
+                    <tr>
+                        {columns.map((col, idx) => (
+                            <th
+                                key={idx}
+                                className="px-6 py-4 font-semibold uppercase tracking-wide text-xs"
+                            >
+                                {col}
+                            </th>
+                        ))}
                     </tr>
-                ))}
-            </tbody>
-        </table>
-    )
+                </thead>
+                <tbody className="divide-y divide-purple-50">
+                    {data.length > 0 ? (
+                        data.map((item, index) => (
+                            <tr
+                                key={index}
+                                className="hover:bg-purple-50/50 transition-all duration-200"
+                            >
+                                {renderRow(item, index)}
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className="text-center px-6 py-6 text-gray-400 italic"
+                            >
+                                Tidak ada data tersedia
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
 }
