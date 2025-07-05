@@ -20,14 +20,21 @@ const Login = React.lazy(() => import("./pages/auth/Login"));
 const Register = React.lazy(() => import("./pages/auth/Register"));
 const Forgot = React.lazy(() => import("./pages/auth/Forgot"));
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-      <Route path="*" element={<NotFound />} />
-        <Route element={<MainLayout />}>
+       <Route
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<Dashboard />} />
           <Route path="/job" element={<Job />} />
           <Route path="/blog" element={<Blog />} />

@@ -1,131 +1,114 @@
-import { ImSpinner2 } from "react-icons/im";
-import { BsFillExclamationDiamondFill } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../../utils/supabaseClient";
+import bcrypt from "bcryptjs";
 
 export default function Login() {
-  /* navigate, state & handleChange*/
-  const navigate = useNavigate();
+  const [dataForm, setDataForm] = useState({ nama: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [dataForm, setDataForm] = useState({
-    email: "",
-    password: "",
-  });
+  const navigate = useNavigate();
 
-  const handleChange = (evt) => {
-    const { name, value } = evt.target;
-    setDataForm({
-      ...dataForm,
-      [name]: value,
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDataForm({ ...dataForm, [name]: value });
   };
 
-  /* process form */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
-    setError(false);
+    setError("");
 
-    axios
-      .post("https://dummyjson.com/user/login", {
-        username: dataForm.email,
-        password: dataForm.password,
-      })
-      .then((response) => {
-        // Jika status bukan 200, tampilkan pesan error
-        if (response.status !== 200) {
-          setError(response.data.message);
-          return;
-        }
+    try {
+      const { data, error } = await supabase
+        .from("admin")
+        .select("*")
+        .eq("nama", dataForm.nama)
+        .single();
 
-        // Redirect ke dashboard jika login sukses
-        navigate("/");
-      })
-      .catch((err) => {
-        if (err.response) {
-          setError(err.response.data.message || "An error occurred");
-        } else {
-          setError(err.message || "An unknown error occurred");
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      if (error || !data) {
+        setError("Nama admin tidak ditemukan");
+        return;
+      }
+
+      const isMatch = await bcrypt.compare(dataForm.password, data.password);
+      if (!isMatch) {
+        setError("Password salah");
+        return;
+      }
+
+      localStorage.setItem("admin", JSON.stringify({ id: data.id, nama: data.nama }));
+      navigate("/");
+    } catch (err) {
+      setError("Gagal login. " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /* error & loading status */
-  const errorInfo = error ? (
-    <div className="bg-red-200 mb-5 p-5 text-sm font-light text-gray-600 rounded flex items-center">
-      <BsFillExclamationDiamondFill className="text-red-600 me-2 text-lg" />
-      {error}
-    </div>
-  ) : null;
-
-  const loadingInfo = loading ? (
-    <div className="bg-gray-200 mb-5 p-5 text-sm rounded flex items-center">
-      <ImSpinner2 className="me-2 animate-spin" />
-      Mohon Tunggu...
-    </div>
-  ) : null;
-
   return (
-    <div>
-      <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">
-        Welcome Back 👋
-      </h2>
-
-      {errorInfo}
-      {loadingInfo}
-
-      <form onSubmit={handleSubmit}>
-        <div className="mb-5">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            type="text"
-            id="email"
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                            placeholder-gray-400"
-            placeholder="you@example.com"
-            name="email"
-            onChange={handleChange}
-          />
+  
+      <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl w-full max-w-xl p-10">
+        <div className="text-center mb-8">
+          <div className="text-4xl md:text-5xl font-extrabold text-purple-600 flex flex-col items-center gap-2">
+            <span>👋</span>
+            <span>Halo Admin</span>
+          </div>
+          <p className="text-sm text-gray-500 mt-2">Silakan login untuk mengelola portal</p>
         </div>
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                            placeholder-gray-400"
-            placeholder="********"
-            name="password"
-            onChange={handleChange}
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4
-                        rounded-lg transition duration-300"
-        >
-          Login
-        </button>
-      </form>
-      <div className="mt-4 flex justify-center gap-4">
-        <Link to="/forgot" className="text-blue-600 hover:underline">
-          Forgot Password?
-        </Link>
-        <Link to="/register" className="text-blue-600 hover:underline">
-          Register
-        </Link>
+
+        {error && (
+          <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        {loading && (
+          <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded mb-4 text-sm animate-pulse">
+            Mohon tunggu...
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Admin</label>
+            <input
+              type="text"
+              name="nama"
+              value={dataForm.nama}
+              onChange={handleChange}
+              placeholder="Masukkan nama admin"
+              className="w-full px-4 py-3 border border-purple-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={dataForm.password}
+              onChange={handleChange}
+              placeholder="Masukkan password"
+              className="w-full px-4 py-3 border border-yellow-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl text-white text-base font-semibold bg-gradient-to-r from-purple-500 via-blue-500 to-green-500 hover:opacity-90 transition duration-300"
+          >
+            {loading ? "Memproses..." : "Login Sekarang"}
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-gray-500 mt-8">
+          © 2025 Job Portal. All rights reserved.
+        </p>
       </div>
-    </div>
+
   );
 }
