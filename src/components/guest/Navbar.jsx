@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import logo from "../../assets/Images/jobhub-logo.svg";
+import logo from "../../assets/Images/Logo-Job-portal.png";
 
 export default function Navbar() {
   // Animasi item navigation saat muncul
