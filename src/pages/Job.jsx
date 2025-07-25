@@ -6,6 +6,7 @@ import EmptyState from "../components/components-Generic/EmptyState";
 import GenericTable from "../components/components-Generic/GenericTable";
 import LoadingSpinner from "../components/components-Generic/LoadingSpinner";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { motion } from "framer-motion";
 
 export default function Job() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -138,15 +139,56 @@ export default function Job() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-100 via-blue-50 to-green-50 rounded-3xl shadow-lg border border-purple-100">
-      <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Manajemen Lowongan</h2>
+    <motion.div
+      className="min-h-screen bg-gray-50 p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* === Header top === */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl px-4 py-2 w-1/2">
+          <input
+            type="text"
+            placeholder="Cari lowongan..."
+            className="flex-1 outline-none text-gray-700"
+          />
+          <button className="text-gray-400 hover:text-gray-600">🔍</button>
+        </div>
+        <div className="flex gap-3">
+          <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-100">
+            🔧 Filter
+          </button>
+          <button
+            onClick={() => {
+              setIsEditMode(false);
+              setEditId(null);
+              setDataForm({
+                title_job: "",
+                company_name: "",
+                job_type: "",
+                location: "",
+                salary_min: "",
+                salary_max: "",
+                category: "",
+                description: "",
+                image: "",
+              });
+            }}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-xl shadow hover:from-purple-600 hover:to-blue-600"
+          >
+            + Tambah Lowongan
+          </button>
+        </div>
+      </div>
 
-      {error && <AlertBox type="error">{error}</AlertBox>}
-      {success && <AlertBox type="success">{success}</AlertBox>}
-
-      <form
+      {/* === Form === */}
+      <motion.form
         onSubmit={handleSubmit}
-        className="bg-white/70 p-8 rounded-2xl shadow-md backdrop-blur-md border border-purple-100 grid grid-cols-2 gap-4"
+        className="bg-white/70 p-8 rounded-2xl shadow-md backdrop-blur-md border border-purple-100 grid grid-cols-2 gap-4 mb-8"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
       >
         <input
           name="title_job"
@@ -248,48 +290,79 @@ export default function Job() {
             </button>
           )}
         </div>
-      </form>
+      </motion.form>
 
-      <div className="mt-10">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-700">Daftar Lowongan ({jobs.length})</h3>
-
-        {loading && <LoadingSpinner text="Memuat lowongan..." />}
-        {!loading && jobs.length === 0 && <EmptyState text="Belum ada lowongan." />}
-        {!loading && jobs.length > 0 && (
-          <GenericTable
-            columns={["#", "Judul", "Perusahaan", "Kategori", "Gaji", "Image", "#", "#"]}
-            data={jobs}
-            renderRow={(job, index) => (
-              <>
-                <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2 font-semibold text-purple-800">{job.title_job}</td>
-                <td className="px-4 py-2">{job.company_name}</td>
-                <td className="px-4 py-2">{job.category}</td>
-                <td className="px-4 py-2">{job.salary_min} - {job.salary_max}</td>
-                <td className="px-4 py-2">
+      {/* === Tabel === */}
+      <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+        <table className="min-w-full text-left">
+          <thead className="bg-gradient-to-r from-purple-600 to-blue-500 text-white">
+            <tr>
+              <th className="px-6 py-3">Logo</th>
+              <th className="px-6 py-3">Judul</th>
+              <th className="px-6 py-3">Perusahaan</th>
+              <th className="px-6 py-3">Lokasi</th>
+              <th className="px-6 py-3">Kategori</th>
+              <th className="px-6 py-3">Gaji</th>
+              <th className="px-6 py-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {jobs.map((job) => (
+              <motion.tr
+                key={job.id}
+                className="border-b hover:bg-gray-50"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <td className="px-6 py-3">
                   {job.image && (
                     <img
                       src={job.image}
-                      alt="image"
-                      className="w-10 h-10 object-contain rounded-md border border-purple-200"
+                      alt="logo"
+                      className="w-10 h-10 rounded-md object-cover"
                     />
                   )}
                 </td>
-                <td className="px-4 py-2">
-                  <button onClick={() => handleEdit(job)}>
-                    <AiFillEdit className="text-blue-500 hover:text-blue-700 text-xl" />
+                <td className="px-6 py-3 font-semibold text-gray-800">
+                  {job.title_job}
+                </td>
+                <td className="px-6 py-3">{job.company_name}</td>
+                <td className="px-6 py-3">{job.location}</td>
+                <td className="px-6 py-3">
+                  <span className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700">
+                    {job.category}
+                  </span>
+                </td>
+                <td className="px-6 py-3">
+                  {job.salary_min} - {job.salary_max}
+                </td>
+                <td className="px-6 py-3 flex items-center gap-3 justify-center">
+                  <button
+                    onClick={() => handleEdit(job)}
+                    className="p-2 bg-blue-100 hover:bg-blue-200 rounded-full"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDelete(job.id)}
+                    className="p-2 bg-red-100 hover:bg-red-200 rounded-full"
+                  >
+                    🗑️
                   </button>
                 </td>
-                <td className="px-4 py-2">
-                  <button onClick={() => handleDelete(job.id)}>
-                    <AiFillDelete className="text-red-500 hover:text-red-700 text-xl" />
-                  </button>
+              </motion.tr>
+            ))}
+            {jobs.length === 0 && (
+              <tr>
+                <td colSpan={7} className="text-center px-6 py-8 text-gray-400">
+                  Belum ada data lowongan.
                 </td>
-              </>
+              </tr>
             )}
-          />
-        )}
+          </tbody>
+        </table>
       </div>
-    </div>
+    </motion.div>
   );
 }
